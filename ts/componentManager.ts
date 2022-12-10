@@ -2,7 +2,7 @@
 // @ts-ignore
 import { v4 as UUID } from "./utils/uuid.js";
 import BaseComponent from "./components/baseComponent";
-import Input from "./components/input";
+import Input from "./components/input.js";
 import Output from "./components/output";
 import Renderer from "./renderer/renderer";
 import { hasOverlap, vec2 } from "./utils/math.js";
@@ -20,8 +20,22 @@ class ComponentManager {
 
     addComponent(component : BaseComponent) : string {
         const id = UUID();
-        this.components.set(id, component)
+        this.components.set(id, component);
         component.id = id;
+        return id;
+    }
+
+    addInput(input : Input) : string {
+        const id = UUID();
+        this.inputs.set(id, input);
+        input.id = id;
+        return id;
+    }
+
+    addOutput(output : Output) : string {
+        const id = UUID();
+        this.outputs.set(id, output);
+        output.id = id;
         return id;
     }
 
@@ -56,8 +70,16 @@ class ComponentManager {
     }
 
     onRender(renderer : Renderer) {
-        for (const value of this.components.values()) {
-            value.onRender(renderer);
+        for (const component of this.components.values()) {
+            component.onRender(renderer);
+        }
+
+        for (const input of this.inputs.values()) {
+            input.onRender(renderer);
+        }
+
+        for (const output of this.outputs.values()) {
+            output.onRender(renderer);
         }
     }
 }

@@ -1,8 +1,12 @@
+
 import { TILE_SIZE } from "../constants.js";
-import Renderer from "../renderer/renderer";
 import { snapToNearest, square, vec2 } from "../utils/math.js";
-import Input from "./input";
-import Output from "./output";
+
+import Renderer from "../renderer/renderer";
+import Input from "./input.js";
+import Output from "./output.js";
+
+import componentManager from "../componentManager.js";
 
 export default class BaseComponent {
     id: string;
@@ -28,6 +32,11 @@ export default class BaseComponent {
         this.inputs = [];
         this.outputs = [];
         this.children = [];
+
+        this.inputs.push(componentManager.addInput(new Input(0, 0, this)));
+        this.inputs.push(componentManager.addInput(new Input(0, 2, this)));
+
+        this.outputs.push(componentManager.addOutput(new Output(2, 1, this)));
     }
 
     getDimensions() : square {
