@@ -6,16 +6,19 @@ import Input from "./components/input.js";
 import Output from "./components/output";
 import Renderer from "./renderer/renderer";
 import { hasOverlap, vec2 } from "./utils/math.js";
+import Connection from "./components/connections/connection";
 
 class ComponentManager {
     components : Map<string, BaseComponent>;
     inputs: Map<string, Input>;
     outputs: Map<string, Output>;
+    connections: Map<string, Connection>;
 
     constructor() {
         this.components = new Map();
         this.inputs = new Map();
         this.outputs = new Map();
+        this.connections = new Map();
     }
 
     addComponent(component : BaseComponent) : string {
@@ -36,6 +39,13 @@ class ComponentManager {
         const id = UUID();
         this.outputs.set(id, output);
         output.id = id;
+        return id;
+    }
+
+    addConnection(connection : Connection) : string {
+        const id = UUID();
+        this.connections.set(id, connection);
+        connection.id = id;
         return id;
     }
 
@@ -80,6 +90,10 @@ class ComponentManager {
 
         for (const output of this.outputs.values()) {
             output.onRender(renderer);
+        }
+
+        for (const connection of this.connections.values()) {
+            connection.onRender(renderer);
         }
     }
 }

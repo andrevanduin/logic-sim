@@ -1,11 +1,13 @@
 
-import Input from './input/input.js';
+import Input from './input/inputHandler.js';
 import Renderer from './renderer/renderer.js';
 import Grid from './renderer/grid.js';
 import { Keys } from './input/key.js';
 import componentManager from './componentManager.js';
-import BaseComponent from './components/baseComponent.js';
 import { Buttons } from './input/buttons.js';
+import ConstantOutput from './components/default/constantOutput.js';
+import ANDGate from './components/default/andGate.js';
+import Connection from './components/connections/connection.js';
 
 const renderer = new Renderer();
 const grid = new Grid();
@@ -41,7 +43,27 @@ export default class Simulation {
             input.mousePos.y = e.clientY;
         });
 
-        componentManager.addComponent(new BaseComponent(40, 40, 60, 60, '#FF0000'));
+        const outputA = new ConstantOutput(200, 100);
+        const outputB = new ConstantOutput(200, 140);
+
+        componentManager.addComponent(outputA);
+        componentManager.addComponent(outputB);
+
+        const and = new ANDGate(260, 100);
+        componentManager.addComponent(and);
+    
+        const startAId = outputA.outputs[0];
+        const endAId   = and.inputs[0];
+
+        componentManager.addConnection(new Connection(startAId, endAId));
+
+        const startBId = outputB.outputs[0];
+        const endBId   = and.inputs[1];
+
+        const connectionB = new Connection(startBId, endBId);
+        connectionB.connectors.push({ x: 210, y: 144 });
+
+        componentManager.addConnection(connectionB);
     }
 
     run(timeStamp : number) {
@@ -92,6 +114,8 @@ export default class Simulation {
 
         grid.onRender(renderer);
         componentManager.onRender(renderer);
+
+        input.onRender(renderer);
 
         renderer.setTextSize(20);
         renderer.setFillColor('#FFF');

@@ -81,8 +81,6 @@ export default class Renderer {
     drawBox(x : number, y : number, width : number, height : number, stroke: boolean = false) {
         if (!this.ctx) return;
 
-        this.ctx.fillStyle = this.fillColor;
-
         const xPos = x - this.position.x;
         const yPos = y - this.position.y;
 
@@ -94,6 +92,16 @@ export default class Renderer {
             this.ctx.strokeStyle = this.lineColor;
             this.ctx.strokeRect(xPos, yPos, width, height);
         }
+    }
+
+    strokeBox(x : number, y : number, width : number, height: number) {
+        if (!this.ctx) return;
+
+        const xPos = x - this.position.x;
+        const yPos = y - this.position.y;
+        if (!this.isOnScreen(xPos, yPos, width, height)) return;
+
+        this.ctx.strokeRect(xPos, yPos, width, height);
     }
 
     _drawLine(fromX : number, fromY : number, toX : number, toY : number) {
@@ -125,9 +133,10 @@ export default class Renderer {
         const yPosTo = toY - this.position.y;
 
         if (!this.isOnScreen(xPosFrom, yPosFrom, xPosTo - xPosFrom, yPosTo - yPosFrom)) return;
-
-        this.ctx.moveTo(xPosFrom, yPosFrom);
-        this.ctx.lineTo(xPosTo, yPosTo);
+        
+        this.ctx.beginPath();
+            this.ctx.moveTo(xPosFrom, yPosFrom);
+            this.ctx.lineTo(xPosTo, yPosTo);
         this._stroke();
     }
 

@@ -1,6 +1,8 @@
 import componentManager from "../componentManager.js";
 import BaseComponent from "../components/baseComponent";
-import { vec2 } from "../utils/math";
+import { TILE_SIZE } from "../constants.js";
+import Renderer from "../renderer/renderer.js";
+import { vec2, snapToNearest } from "../utils/math.js";
 import { Buttons } from "./buttons.js";
 
 export default class InputHandler {
@@ -114,6 +116,20 @@ export default class InputHandler {
         }
         for (const [key, value] of this.buttons.entries()) {
             this.prevButtons.set(key, value);
+        }
+    }
+
+    onRender(renderer : Renderer) {
+        if (this.dragComponent) {
+            // We are dragging so let's draw an outline
+            const x = snapToNearest(this.dragComponent.x, TILE_SIZE);
+            const y = snapToNearest(this.dragComponent.y, TILE_SIZE);
+            const width = this.dragComponent.width;
+            const height = this.dragComponent.height;
+
+            renderer.setLineColor('#FFF');
+            renderer.setLineWidth(2);
+            renderer.strokeBox(x, y, width, height);
         }
     }
 }
